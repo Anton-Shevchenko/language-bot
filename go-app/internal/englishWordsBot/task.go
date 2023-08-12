@@ -1,6 +1,7 @@
 package englishWordsBot
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go-app/internal/domain/user"
 	"go-app/internal/domain/word"
@@ -46,6 +47,7 @@ func (j *WordJob) WordJob() {
 	us := j.userRepository.GetByIntervals(intervals)
 
 	for _, u := range us {
+		fmt.Println("HERE Word Job")
 		if j.checkIsNotDisturbTime(u) {
 			return
 		}
@@ -57,16 +59,21 @@ func (j *WordJob) checkIsNotDisturbTime(u *user.User) bool {
 	if u.NotDisturbFrom == "" {
 		return false
 	}
+	fmt.Println("HERE Checker", u.NotDisturbFrom)
+
 	parse, err := time.Parse("15:04", u.NotDisturbFrom)
 	if err != nil {
 		return true
 	}
-
+	fmt.Println("HERE Checker parse", parse)
 	to := parse.Add(time.Duration(u.NotDisturbInterval/60) * time.Minute)
 
 	if to.Sub(parse) >= time.Duration(u.NotDisturbInterval/60)*time.Minute {
+		fmt.Println("HERE Checker false")
 		return false
 	}
+
+	fmt.Println("HERE Checker parse", parse)
 
 	return true
 }
