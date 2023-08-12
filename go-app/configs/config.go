@@ -1,30 +1,35 @@
 package configs
 
-import "os"
+import (
+	"go-app/pkg/randomWordsGenerator"
+	"os"
+)
 
 const (
 	prod = "production"
 )
 
-// Config object
 type Config struct {
-	Env     string        `env:"ENV"`
-	MongoDB MongoDBConfig `json:"mongodb"`
-	Host    string        `env:"APP_HOST"`
-	Port    string        `env:"APP_PORT"`
+	Env                       string
+	MongoDB                   MongoDBConfig
+	Host                      string
+	Port                      string
+	RandomWordGeneratorConfig randomWordsGenerator.RandomWordGeneratorConfig
 }
 
-// IsProd Checks if env is production
 func (c Config) IsProd() bool {
 	return c.Env == prod
 }
 
-// GetConfig gets all config for the application
 func GetConfig() Config {
 	return Config{
 		Env:     os.Getenv("ENV"),
 		MongoDB: GetMongoDBConfig(),
 		Host:    os.Getenv("APP_HOST"),
 		Port:    os.Getenv("APP_PORT"),
+		RandomWordGeneratorConfig: randomWordsGenerator.RandomWordGeneratorConfig{
+			Url:    os.Getenv("RW_URL"),
+			ApiKey: os.Getenv("RW_API_KEY"),
+		},
 	}
 }
