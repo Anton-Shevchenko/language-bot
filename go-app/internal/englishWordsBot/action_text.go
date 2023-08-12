@@ -21,6 +21,11 @@ func (b EnglishWordsBot) getWordAndSendTranslateOptions(u tgbotapi.Update) {
 		msgText = u.Message.Text
 	}
 	chatUser := b.userRepository.GetByChatId(chatId)
+
+	if chatUser.ChatId == 0 {
+		b.commandStart(u)
+	}
+
 	w := chatUser.WaitingType
 
 	switch {
