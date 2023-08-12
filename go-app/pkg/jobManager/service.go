@@ -41,10 +41,7 @@ func (j *JobManager) findCurrentTasks(pull jobPull) []*Job {
 }
 
 func (j *JobManager) isCurrentTask(interval int) bool {
-	if time.Now().Minute() == 0 {
-		return true
-	}
-	return interval%time.Now().Minute() != 0
+	return time.Now().Minute()%interval == 0
 }
 
 func (j *JobManager) getPullIntervals(pull jobPull) []int {
