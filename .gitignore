@@ -3,3 +3,5 @@ mongodata/
 
 #  Air
 go-app/tmp/
+
+go-app/.env

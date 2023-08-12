@@ -54,6 +54,9 @@ func (j *WordJob) WordJob() {
 }
 
 func (j *WordJob) checkIsNotDisturbTime(u *user.User) bool {
+	if u.NotDisturbFrom == "" {
+		return false
+	}
 	parse, err := time.Parse("15:04", u.NotDisturbFrom)
 	if err != nil {
 		return true

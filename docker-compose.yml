@@ -4,6 +4,7 @@ services:
     go-app:
         build: ./go-app
         container_name: go_app
+        restart: "on-failure"
         depends_on:
             - 'mongo'
         environment:
