@@ -31,7 +31,7 @@ func NewWordJob(wordRepository jobWordRepository, userRepository jobUserReposito
 	return &WordJob{
 		userRepository:       userRepository,
 		wordRepository:       wordRepository,
-		intervals:            []uint16{30, 60, 120, 180},
+		intervals:            []uint16{2, 30, 60, 120, 180},
 		currentIntervalIndex: 0,
 		bot:                  bot,
 	}

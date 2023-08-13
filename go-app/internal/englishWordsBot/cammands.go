@@ -2,6 +2,7 @@ package englishWordsBot
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"go-app/internal/domain/user"
 	"go-app/internal/domain/word"
 	"go-app/pkg/bot/msgBuilder"
 	"go-app/pkg/wordTranslator"
@@ -112,7 +113,7 @@ func (b EnglishWordsBot) commandUpdateInterval(u tgbotapi.Update, param string) 
 	if err != nil {
 		return
 	}
-	chatUser.Interval = uint16(interval)
+	chatUser.Interval = user.Interval(interval)
 	_, err = b.userRepository.Update(chatUser)
 
 	if err != nil {

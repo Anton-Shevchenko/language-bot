@@ -12,8 +12,9 @@ func (b EnglishWordsBot) commandStart(u tgbotapi.Update) {
 
 	if savedUser.ChatId == 0 {
 		_, err := b.userRepository.Create(&user.User{
-			ChatId:  u.Message.Chat.ID,
-			MaxRate: 5,
+			ChatId:   u.Message.Chat.ID,
+			MaxRate:  5,
+			Interval: user.Interval60,
 		})
 
 		if err != nil {
