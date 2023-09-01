@@ -116,7 +116,7 @@ func (b EnglishWordsBot) updateNativeLang(u tgbotapi.Update, param string) {
 		return
 	}
 
-	_, _ = b.api.Send(tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "✅"))
+	b.SendMsg(tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "✅"))
 }
 
 func (b EnglishWordsBot) updateLevelLang(u tgbotapi.Update, param string) {
