@@ -147,11 +147,11 @@ func (b EnglishWordsBot) handleAnswer(u tgbotapi.Update) {
 	chatId := u.CallbackQuery.Message.Chat.ID
 	chatUser := b.userRepository.GetByChatId(chatId)
 	w := b.wordRepository.GetByChatIdAndValue(chatId, u.CallbackQuery.Message.Text)
-	rateStr := fmt.Sprintf("rate: %d/%d", w.Rate, chatUser.MaxRate)
 
 	if w.Translation == call.Action {
 
 		w.Rate++
+		rateStr := fmt.Sprintf("rate: %d/%d", w.Rate, chatUser.MaxRate)
 		_, err := b.wordRepository.Update(w)
 
 		if err != nil {
@@ -165,9 +165,10 @@ func (b EnglishWordsBot) handleAnswer(u tgbotapi.Update) {
 		return
 	}
 
+	w.Rate--
+	rateStr := fmt.Sprintf("rate: %d/%d", w.Rate, chatUser.MaxRate)
 	msg := tgbotapi.NewEditMessageText(chatId, u.CallbackQuery.Message.MessageID, w.Value+" - "+w.Translation+" 👺 "+rateStr)
 
-	w.Rate--
 	_, _ = b.wordRepository.Update(w)
 
 	if _, err := b.api.Send(msg); err != nil {
