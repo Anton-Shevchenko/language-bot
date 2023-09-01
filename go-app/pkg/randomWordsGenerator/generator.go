@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type RandomWordGeneratorConfig struct {
+type Config struct {
 	Url    string
 	ApiKey string
 }
@@ -24,7 +24,7 @@ type Service struct {
 	apiKey string
 }
 
-func NewRandomWordsGenerator(cf RandomWordGeneratorConfig) RandomWordsGenerator {
+func NewRandomWordsGenerator(cf Config) RandomWordsGenerator {
 	return &Service{url: cf.Url, apiKey: cf.ApiKey}
 }
 

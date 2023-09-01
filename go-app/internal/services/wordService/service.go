@@ -12,24 +12,32 @@ type WordService interface {
 	AddWord(word *word.Word) (*word.Word, error)
 	GetTranslations(w string, u *user.User) ([]string, error)
 	GetRandomWords(count int) []string
+	GetParagraph() string
 }
 
 type RandomWordsGenerator interface {
 	GetRandomWords(count int) []string
 }
 
+type ParagraphGenerator interface {
+	GetRandomParagraph() string
+}
+
 type wordService struct {
 	Repository           wordRepository.WordRepository
 	RandomWordsGenerator RandomWordsGenerator
+	ParagraphGenerator   ParagraphGenerator
 }
 
 func NewWordService(
 	repo wordRepository.WordRepository,
 	randWordsGenerator RandomWordsGenerator,
+	paragraphGenerator ParagraphGenerator,
 ) WordService {
 	return &wordService{
 		Repository:           repo,
 		RandomWordsGenerator: randWordsGenerator,
+		ParagraphGenerator:   paragraphGenerator,
 	}
 }
 
@@ -63,4 +71,8 @@ func (bs *wordService) GetTranslations(w string, u *user.User) ([]string, error)
 
 func (bs *wordService) GetRandomWords(count int) []string {
 	return bs.RandomWordsGenerator.GetRandomWords(count)
+}
+
+func (bs *wordService) GetParagraph() string {
+	return bs.ParagraphGenerator.GetRandomParagraph()
 }

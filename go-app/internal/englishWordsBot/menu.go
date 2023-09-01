@@ -23,6 +23,9 @@ func (b EnglishWordsBot) handleMenu(u tgbotapi.Update) {
 	case "My words ✏️":
 		b.commandList(u)
 		return
+	case "Paragraph 📝️":
+		b.commandParagraph(u)
+		return
 	default:
 		b.getWordAndSendTranslateOptions(u)
 	}
@@ -33,8 +36,8 @@ func (b EnglishWordsBot) sendMenu(chatID int64) {
 	msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton(fmt.Sprintf(Settings)),
-
 			tgbotapi.NewKeyboardButton("New Words 📖"),
+			tgbotapi.NewKeyboardButton("Paragraph 📝️"),
 			tgbotapi.NewKeyboardButton("Test me 💻️"),
 			tgbotapi.NewKeyboardButton("My words ✏️"),
 		),

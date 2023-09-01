@@ -55,6 +55,12 @@ func (b EnglishWordsBot) commandExam(u tgbotapi.Update) {
 	}
 }
 
+func (b EnglishWordsBot) commandParagraph(u tgbotapi.Update) {
+	chatId := u.Message.Chat.ID
+	msg := tgbotapi.NewMessage(chatId, b.wordService.GetParagraph())
+	b.SendMsg(msg)
+}
+
 func (b EnglishWordsBot) commandList(u tgbotapi.Update) {
 	words, err := b.wordRepository.GetAllByChatId(u.Message.Chat.ID)
 	chatId := u.Message.Chat.ID

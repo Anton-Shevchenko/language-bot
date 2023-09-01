@@ -10,6 +10,7 @@ import (
 	"go-app/internal/repositories/wordRepository"
 	"go-app/internal/services/wordService"
 	"go-app/pkg/jobManager"
+	"go-app/pkg/randomParagraphGenerator"
 	"go-app/pkg/randomWordsGenerator"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,11 +36,12 @@ func Run() {
 	}
 
 	randWordsGenerator := randomWordsGenerator.NewRandomWordsGenerator(config.RandomWordGeneratorConfig)
+	paragraphGenerator := randomParagraphGenerator.NewRandomParagraphGenerator(config.RandomParagraphGeneratorConfig)
 
 	wordRepo := wordRepository.NewWordRepository(mongoDB)
 	userRepo := userRepository.NewUserRepository(mongoDB)
 
-	newWordService := wordService.NewWordService(wordRepo, randWordsGenerator)
+	newWordService := wordService.NewWordService(wordRepo, randWordsGenerator, paragraphGenerator)
 
 	botTokens := configs.GetBotsTokens()
 	englishBot := englishWordsBot.NewEnglishBot(

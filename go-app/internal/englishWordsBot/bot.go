@@ -38,6 +38,7 @@ type wordService interface {
 	AddWord(word *word.Word) (*word.Word, error)
 	GetTranslations(w string, u *user.User) ([]string, error)
 	GetRandomWords(count int) []string
+	GetParagraph() string
 }
 
 type EnglishWordsBot struct {
