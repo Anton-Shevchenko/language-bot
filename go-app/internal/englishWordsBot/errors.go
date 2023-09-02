@@ -7,5 +7,5 @@ import (
 
 func (b EnglishWordsBot) SendError(chatId int64, err error) {
 	b.SendMsg(tgbotapi.NewMessage(chatId, "Something wrong. Try to write me later"))
-	log.Panicln(err)
+	log.Println(err)
 }

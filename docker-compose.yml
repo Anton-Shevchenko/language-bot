@@ -13,6 +13,9 @@ services:
             - '8000:8000'
         volumes:
             - './go-app:/opt/go-app:cached'
+        networks:
+            - app-network
+
     # MongoDB
     mongo:
         image: 'mongo:4.4'
@@ -20,8 +23,11 @@ services:
         ports:
             - '27017:27017'
         volumes:
-            - ./mongodata:/data/db
+            - dbdata:/mongodata:/data/db
         restart: always
+        networks:
+            - app-network
+
     # Mongo Express Web-based MongoDB admin interface
 #    mongo_express:
 #        image: 'mongo-express:0.54.0'
@@ -31,3 +37,12 @@ services:
 #        ports:
 #            - '8081:8081'
 #        restart: always
+
+#Docker Networks
+networks:
+    app-network:
+        driver: bridge
+#Volumes
+volumes:
+    dbdata:
+        driver: local

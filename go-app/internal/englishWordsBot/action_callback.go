@@ -122,7 +122,11 @@ func (b EnglishWordsBot) callbackTranslation(u tgbotapi.Update) {
 
 	//TODO
 	chatUser.WaitingType = ""
-	b.userRepository.Update(chatUser)
+	_, err := b.userRepository.Update(chatUser)
+
+	if err != nil {
+		b.SendMsg(tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "Some error. Sorry..."))
+	}
 
 	valueLang, err := languageDetector.Detect(u.CallbackQuery.Message.Text, chatUser.GetUserLangs())
 	transLang, err := languageDetector.Detect(param, chatUser.GetUserLangs())
@@ -157,7 +161,11 @@ func (b EnglishWordsBot) handleAnswer(u tgbotapi.Update) {
 		if err != nil {
 			return
 		}
-		msg := tgbotapi.NewEditMessageText(chatId, u.CallbackQuery.Message.MessageID, w.Value+" - "+w.Translation+" 😀 "+rateStr)
+		msg := tgbotapi.NewEditMessageText(
+			chatId,
+			u.CallbackQuery.Message.MessageID,
+			w.Value+" - "+w.Translation+" 😀 "+rateStr,
+		)
 		if _, err := b.api.Send(msg); err != nil {
 			panic(err)
 		}
@@ -167,7 +175,11 @@ func (b EnglishWordsBot) handleAnswer(u tgbotapi.Update) {
 
 	w.Rate--
 	rateStr := fmt.Sprintf("rate: %d/%d", w.Rate, chatUser.MaxRate)
-	msg := tgbotapi.NewEditMessageText(chatId, u.CallbackQuery.Message.MessageID, w.Value+" - "+w.Translation+" 👺 "+rateStr)
+	msg := tgbotapi.NewEditMessageText(
+		chatId,
+		u.CallbackQuery.Message.MessageID,
+		w.Value+" - "+w.Translation+" 👺 "+rateStr,
+	)
 
 	_, _ = b.wordRepository.Update(w)
 
