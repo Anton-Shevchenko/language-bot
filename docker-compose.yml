@@ -20,10 +20,14 @@ services:
     mongo:
         image: 'mongo:4.4'
         container_name: mongo
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: western_user
+            MONGO_INITDB_ROOT_PASSWORD: western_mongodb_root_password
+            MONGO_INITDB_DATABASE: main
         ports:
             - '27017:27017'
         volumes:
-            - dbdata:/mongodata:/data/db
+            - dbdata:/dbdata
         restart: always
         networks:
             - app-network
