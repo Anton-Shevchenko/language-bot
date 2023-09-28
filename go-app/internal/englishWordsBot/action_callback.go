@@ -11,11 +11,16 @@ import (
 	"time"
 )
 
+const (
+	menuType = "menu"
+)
+
 func (b EnglishWordsBot) handleCallback(u tgbotapi.Update) {
 	call := msgBuilder.CallbackStringToData(u.CallbackData())
 	callType := call.Type
 	callAction := call.Action
 	fmt.Println("TYPE", callType)
+
 	switch callType {
 	case "manage":
 		b.manageWord(u, callAction)
@@ -65,10 +70,10 @@ func (b EnglishWordsBot) updateNotDisturbInterval(u tgbotapi.Update, call *msgBu
 	chatUser.NotDisturbFrom = ct.Format("15:04")
 	interval, err := strconv.Atoi(call.Action)
 
-	fmt.Println("TIME", ct.Format("15:04"), interval)
 	if err != nil {
 		return
 	}
+
 	chatUser.NotDisturbInterval = int16(interval)
 	_, err = b.userRepository.Update(chatUser)
 

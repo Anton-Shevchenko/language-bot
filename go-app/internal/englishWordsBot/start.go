@@ -45,7 +45,7 @@ func (b EnglishWordsBot) commandStart(u tgbotapi.Update) {
 	}
 
 	b.SendMsg(tgbotapi.NewMessage(u.Message.Chat.ID, "Hi again"))
-	b.sendMenu(u.Message.Chat.ID)
+	b.sendMainMenu(u.Message.Chat.ID)
 }
 
 func (b EnglishWordsBot) askLangLevel(chatID int64) {
@@ -93,6 +93,7 @@ func (b EnglishWordsBot) askTargetLang(chatID int64) {
 			tgbotapi.NewInlineKeyboardButtonData("English", "target/en"),
 			tgbotapi.NewInlineKeyboardButtonData("French", "target/fr"),
 			tgbotapi.NewInlineKeyboardButtonData("Germany", "target/de"),
+			tgbotapi.NewInlineKeyboardButtonData("Dutch", "target/nl"),
 		),
 	)
 

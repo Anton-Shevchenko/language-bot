@@ -5,6 +5,28 @@ import (
 	"go-app/internal/domain/word"
 )
 
+func NewInline(rows []tgbotapi.InlineKeyboardButton) tgbotapi.InlineKeyboardMarkup {
+	return tgbotapi.NewInlineKeyboardMarkup(rows)
+}
+
+func AddInlineRow() []tgbotapi.InlineKeyboardButton {
+	return tgbotapi.NewInlineKeyboardRow()
+}
+
+func AddReplyRow() []tgbotapi.KeyboardButton {
+	return tgbotapi.NewKeyboardButtonRow()
+}
+
+func AddInlineButton(row *[]tgbotapi.InlineKeyboardButton, callback *Callback) {
+	*row = append(*row, tgbotapi.NewInlineKeyboardButtonData(callback.Key, CallbackDataToString(callback)))
+}
+
+func AddReplyButton(row *[]tgbotapi.KeyboardButton, key string) {
+	*row = append(*row, tgbotapi.NewKeyboardButton(key))
+}
+
+// Old below
+
 func BuildKeyboard(msg *tgbotapi.MessageConfig, keys []string, word string) {
 	var rows [][]tgbotapi.InlineKeyboardButton
 

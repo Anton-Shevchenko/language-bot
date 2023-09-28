@@ -46,10 +46,9 @@ func (b EnglishWordsBot) commandExam(u tgbotapi.Update) {
 		}
 
 		msg := tgbotapi.NewMessage(u.Message.Chat.ID, w.Value)
-		msgBuilder.BuildKeyboardByCallbacks(&msg, calls)
-
-		rand.Seed(time.Now().UnixNano())
+		rand.New(rand.NewSource(time.Now().UnixNano()))
 		rand.Shuffle(len(calls), func(i, j int) { calls[i], calls[j] = calls[j], calls[i] })
+		msgBuilder.BuildKeyboardByCallbacks(&msg, calls)
 
 		b.SendMsg(msg)
 	}

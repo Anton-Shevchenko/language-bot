@@ -1,53 +1,75 @@
 package englishWordsBot
 
 import (
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"go-app/pkg/bot/msgBuilder"
 )
 
 const (
-	Settings = "Settings ⚙️"
+	Settings  = "Settings ⚙️"
+	Cabinet   = "Cabinet 👤"
+	Back      = "Back 🔼"
+	NewWords  = "New Words 🆕"
+	Paragraph = "Paragraph 📝️"
+	TestMe    = "Test me 💻️"
 )
 
 func (b EnglishWordsBot) handleMenu(u tgbotapi.Update) {
 	switch u.Message.Text {
+	case Cabinet:
+		b.sendCabinetMenu(u)
+	case NewWords:
+		b.commandRandomWords(u)
+	case Paragraph:
+		b.commandParagraph(u)
 	case Settings:
 		b.sendSettingsMenu(u)
 		return
-	case "New Words 📖":
-		b.commandRandomWords(u)
+	case Back:
+		b.sendMainMenu(u.Message.Chat.ID)
 		return
-	case "Test me 💻️":
+	case TestMe:
 		b.commandExam(u)
 		return
 	case "My words ✏️":
 		b.commandList(u)
-		return
-	case "Paragraph 📝️":
-		b.commandParagraph(u)
 		return
 	default:
 		b.getWordAndSendTranslateOptions(u)
 	}
 }
 
-func (b EnglishWordsBot) sendMenu(chatID int64) {
+func buildMainMenu() tgbotapi.ReplyKeyboardMarkup {
+	firstRow := msgBuilder.AddReplyRow()
+	msgBuilder.AddReplyButton(&firstRow, Settings)
+	msgBuilder.AddReplyButton(&firstRow, Cabinet)
+
+	return tgbotapi.NewReplyKeyboard(firstRow)
+}
+
+func buildCabinetMenu() tgbotapi.ReplyKeyboardMarkup {
+	firstRow := msgBuilder.AddReplyRow()
+	msgBuilder.AddReplyButton(&firstRow, NewWords)
+	msgBuilder.AddReplyButton(&firstRow, Paragraph)
+	msgBuilder.AddReplyButton(&firstRow, TestMe)
+	secondRow := msgBuilder.AddReplyRow()
+	msgBuilder.AddReplyButton(&secondRow, Back)
+
+	return tgbotapi.NewReplyKeyboard(firstRow, secondRow)
+}
+
+func (b EnglishWordsBot) sendMainMenu(chatID int64) {
 	msg := tgbotapi.NewMessage(chatID, "Menu")
-	msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(fmt.Sprintf(Settings)),
-			tgbotapi.NewKeyboardButton("New Words 📖"),
-			tgbotapi.NewKeyboardButton("Paragraph 📝️"),
-			tgbotapi.NewKeyboardButton("Test me 💻️"),
-			tgbotapi.NewKeyboardButton("My words ✏️"),
-		),
-	)
+	msg.ReplyMarkup = buildMainMenu()
 
-	_, err := b.api.Send(msg)
+	b.SendMsg(msg)
+}
 
-	if err != nil {
-		fmt.Println("ERRR", err.Error())
-	}
+func (b EnglishWordsBot) sendCabinetMenu(u tgbotapi.Update) {
+	msg := tgbotapi.NewMessage(u.Message.Chat.ID, Cabinet)
+	msg.ReplyMarkup = buildCabinetMenu()
+
+	b.SendMsg(msg)
 }
 
 func (b EnglishWordsBot) sendSettingsMenu(u tgbotapi.Update) {

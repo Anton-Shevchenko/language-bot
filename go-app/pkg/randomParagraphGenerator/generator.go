@@ -47,5 +47,9 @@ func (rw *Service) GetRandomParagraph() string {
 		fmt.Println("Error decode:", err.Error())
 	}
 
-	return r[0].Paragraph
+	if len(r) > 0 {
+		return r[0].Paragraph
+	}
+
+	return "Paragraph function error."
 }

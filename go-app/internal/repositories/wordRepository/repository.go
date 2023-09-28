@@ -59,7 +59,7 @@ func (r *wordRepository) AddWord(word *word.Word) (*word.Word, error) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	return word, nil
 }
 
@@ -168,7 +168,6 @@ func (r *wordRepository) GetRandomFive(chatId int64) []*word.Word {
 		[]bson.M{bson.M{"$match": bson.M{"chatId": chatId}}, bson.M{"$sample": bson.M{"size": 5}}},
 	)
 	if err != nil {
-		fmt.Println("errrrrrr", err.Error())
 		return nil
 	}
 
@@ -187,7 +186,6 @@ func (r *wordRepository) GetRandomFive(chatId int64) []*word.Word {
 func (r *wordRepository) GetRandomTranslations(w *word.Word) []*word.Word {
 	var entities []*word.Word
 
-	fmt.Println("HERE", len(entities))
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	collection := r.db.Database("words-db").Collection("words")
 	aggregate, err := collection.Aggregate(
@@ -202,7 +200,6 @@ func (r *wordRepository) GetRandomTranslations(w *word.Word) []*word.Word {
 		},
 	)
 	if err != nil {
-		fmt.Println("errrrrrr", err.Error())
 		return nil
 	}
 

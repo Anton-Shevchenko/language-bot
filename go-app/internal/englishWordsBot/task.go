@@ -106,10 +106,9 @@ func (j *WordJob) SendWord(u *user.User) {
 	}
 
 	msg := tgbotapi.NewMessage(u.ChatId, w.Value)
-	msgBuilder.BuildKeyboardByCallbacks(&msg, calls)
-
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 	rand.Shuffle(len(calls), func(i, j int) { calls[i], calls[j] = calls[j], calls[i] })
+	msgBuilder.BuildKeyboardByCallbacks(&msg, calls)
 
 	j.bot.SendMsg(msg)
 }
