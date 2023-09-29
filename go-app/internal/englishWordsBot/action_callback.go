@@ -19,7 +19,6 @@ func (b EnglishWordsBot) handleCallback(u tgbotapi.Update) {
 	call := msgBuilder.CallbackStringToData(u.CallbackData())
 	callType := call.Type
 	callAction := call.Action
-	fmt.Println("TYPE", callType)
 
 	switch callType {
 	case "manage":
@@ -86,6 +85,13 @@ func (b EnglishWordsBot) updateNotDisturbInterval(u tgbotapi.Update, call *msgBu
 
 func (b EnglishWordsBot) manageWord(u tgbotapi.Update, param string) {
 	entity := b.wordRepository.GetById(param)
+
+	if entity == nil {
+		msg := tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "This word is deleted")
+		b.SendMsg(msg)
+
+		return
+	}
 	msg := tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, entity.Value+" - "+entity.Translation)
 	editCallback := &msgBuilder.Callback{Key: "Edit", Type: "edit", Action: param}
 	deleteCallback := &msgBuilder.Callback{Key: "Delete", Type: "delete", Action: param}
@@ -101,9 +107,15 @@ func (b EnglishWordsBot) deleteWord(u tgbotapi.Update, param string) {
 		b.SendError(u.CallbackQuery.Message.Chat.ID, err)
 	}
 
-	msg := tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "Deleted")
+	msg := tgbotapi.NewEditMessageText(
+		u.CallbackQuery.Message.Chat.ID,
+		u.CallbackQuery.Message.MessageID,
+		"Deleted",
+	)
 
-	b.SendMsg(msg)
+	if _, err := b.api.Send(msg); err != nil {
+		panic(err)
+	}
 }
 
 func (b EnglishWordsBot) editWord(u tgbotapi.Update) {
@@ -128,18 +140,21 @@ func (b EnglishWordsBot) callbackTranslation(u tgbotapi.Update) {
 	//TODO
 	chatUser.WaitingType = ""
 	_, err := b.userRepository.Update(chatUser)
+	translateIndex, err := strconv.Atoi(param)
 
 	if err != nil {
 		b.SendMsg(tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "Some error. Sorry..."))
 	}
+	text := u.CallbackQuery.Message.Text
+	translation, err := b.wordService.GetTranslations(text, chatUser)
 
 	valueLang, err := languageDetector.Detect(u.CallbackQuery.Message.Text, chatUser.GetUserLangs())
-	transLang, err := languageDetector.Detect(param, chatUser.GetUserLangs())
+	transLang, err := languageDetector.Detect(translation[translateIndex], chatUser.GetUserLangs())
 
 	wordEntity, err := b.wordService.AddWord(&word.Word{
-		Value:           req[2],
+		Value:           text,
 		ValueLang:       valueLang,
-		Translation:     param,
+		Translation:     translation[translateIndex],
 		TranslationLang: transLang,
 		ChatId:          chatUser.ChatId,
 	})

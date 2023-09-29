@@ -63,7 +63,6 @@ func (b EnglishWordsBot) getWordAndSendTranslateOptions(u tgbotapi.Update) {
 	}
 
 	msg := tgbotapi.NewMessage(chatId, msgText)
-	msgBuilder.BuildKeyboard(&msg, translations, msgText)
-
+	msgBuilder.BuildKeyboard(&msg, translations)
 	b.SendMsg(msg)
 }

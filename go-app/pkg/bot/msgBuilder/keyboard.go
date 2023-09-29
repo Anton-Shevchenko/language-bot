@@ -3,15 +3,8 @@ package msgBuilder
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go-app/internal/domain/word"
+	"strconv"
 )
-
-func NewInline(rows []tgbotapi.InlineKeyboardButton) tgbotapi.InlineKeyboardMarkup {
-	return tgbotapi.NewInlineKeyboardMarkup(rows)
-}
-
-func AddInlineRow() []tgbotapi.InlineKeyboardButton {
-	return tgbotapi.NewInlineKeyboardRow()
-}
 
 func AddReplyRow() []tgbotapi.KeyboardButton {
 	return tgbotapi.NewKeyboardButtonRow()
@@ -27,16 +20,22 @@ func AddReplyButton(row *[]tgbotapi.KeyboardButton, key string) {
 
 // Old below
 
-func BuildKeyboard(msg *tgbotapi.MessageConfig, keys []string, word string) {
+func BuildKeyboard(msg *tgbotapi.MessageConfig, keys []string) {
 	var rows [][]tgbotapi.InlineKeyboardButton
 
-	for _, k := range keys {
-		btn := tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData(k, "translate/"+k+"/"+word))
+	for i, k := range keys {
+		btn := tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(
+				k,
+				"translate/"+strconv.Itoa(i),
+			),
+		)
 		rows = append(rows, btn)
 	}
 
-	rows = append(rows, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("My Option", "translate/MyOption/"+word)))
-
+	rows = append(rows, tgbotapi.NewInlineKeyboardRow(
+		tgbotapi.NewInlineKeyboardButtonData("My Option", "translate/MyOption")),
+	)
 	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(rows...)
 }
 

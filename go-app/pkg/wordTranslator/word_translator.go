@@ -50,7 +50,7 @@ func Translate(source, sourceLang, targetLang string) ([]string, error) {
 	defer r.Body.Close()
 
 	body, err := io.ReadAll(r.Body)
-
+	fmt.Println("BODY", string(body))
 	if err != nil {
 		return []string{}, errors.New("Error reading response body")
 	}
@@ -67,6 +67,8 @@ func Translate(source, sourceLang, targetLang string) ([]string, error) {
 	}
 
 	if len(result) > 0 {
+		fmt.Println("RESULT", result)
+		fmt.Println("RESULT 1", result[5])
 		inner := result[5]
 		for _, sliceOne := range inner.([]interface{}) {
 			for i, sliceTwo := range sliceOne.([]interface{}) {

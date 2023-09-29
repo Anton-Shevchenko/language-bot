@@ -12,6 +12,7 @@ const (
 	NewWords  = "New Words 🆕"
 	Paragraph = "Paragraph 📝️"
 	TestMe    = "Test me 💻️"
+	MyWords   = "My words ✏️"
 )
 
 func (b EnglishWordsBot) handleMenu(u tgbotapi.Update) {
@@ -31,7 +32,7 @@ func (b EnglishWordsBot) handleMenu(u tgbotapi.Update) {
 	case TestMe:
 		b.commandExam(u)
 		return
-	case "My words ✏️":
+	case MyWords:
 		b.commandList(u)
 		return
 	default:
@@ -51,11 +52,13 @@ func buildCabinetMenu() tgbotapi.ReplyKeyboardMarkup {
 	firstRow := msgBuilder.AddReplyRow()
 	msgBuilder.AddReplyButton(&firstRow, NewWords)
 	msgBuilder.AddReplyButton(&firstRow, Paragraph)
-	msgBuilder.AddReplyButton(&firstRow, TestMe)
 	secondRow := msgBuilder.AddReplyRow()
-	msgBuilder.AddReplyButton(&secondRow, Back)
+	msgBuilder.AddReplyButton(&secondRow, MyWords)
+	msgBuilder.AddReplyButton(&secondRow, TestMe)
+	third := msgBuilder.AddReplyRow()
+	msgBuilder.AddReplyButton(&third, Back)
 
-	return tgbotapi.NewReplyKeyboard(firstRow, secondRow)
+	return tgbotapi.NewReplyKeyboard(firstRow, secondRow, third)
 }
 
 func (b EnglishWordsBot) sendMainMenu(chatID int64) {
