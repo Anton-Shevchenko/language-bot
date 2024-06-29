@@ -42,7 +42,7 @@ func NewWordService(
 }
 
 func (bs *wordService) AddWord(w *word.Word) (*word.Word, error) {
-	oldWord := bs.Repository.GetByValue(w.Value)
+	oldWord := bs.Repository.GetByValueAndTranslationLang(w.Value, w.TranslationLang)
 
 	if oldWord == nil {
 		return bs.Repository.AddWord(w)

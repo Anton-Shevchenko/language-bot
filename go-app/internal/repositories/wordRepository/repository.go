@@ -22,7 +22,7 @@ type WordRepository interface {
 	GetRandomTranslations(w *word.Word) []*word.Word
 	Update(w *word.Word) (*word.Word, error)
 	GetByChatIdAndValue(chatId int64, value string) *word.Word
-	GetByValue(value string) *word.Word
+	GetByValueAndTranslationLang(value, translationLang string) *word.Word
 }
 
 type wordRepository struct {
@@ -108,11 +108,11 @@ func (r *wordRepository) GetById(id string) *word.Word {
 	return &entity
 }
 
-func (r *wordRepository) GetByValue(value string) *word.Word {
+func (r *wordRepository) GetByValueAndTranslationLang(value, translationLang string) *word.Word {
 	var entity word.Word
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	collection := r.db.Database("words-db").Collection("words")
-	res := collection.FindOne(ctx, bson.M{"value": value})
+	res := collection.FindOne(ctx, bson.M{"value": value, "translationLang": translationLang})
 
 	err := res.Decode(&entity)
 
