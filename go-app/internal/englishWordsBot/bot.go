@@ -23,7 +23,7 @@ type wordRepository interface {
 	DeleteById(id string) error
 	GetById(id string) *word.Word
 	Update(w *word.Word) (*word.Word, error)
-	GetRandomFive(chatId int64) []*word.Word
+	GetRandomFive(chatId int64, langTo string) []*word.Word
 	GetRandomTranslations(w *word.Word) []*word.Word
 	GetByChatIdAndValue(chatId int64, value string) *word.Word
 	GetRandom(chatId int64, maxRate int8) *word.Word

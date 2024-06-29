@@ -18,7 +18,7 @@ type WordRepository interface {
 	DeleteById(id string) error
 	GetById(id string) *word.Word
 	GetRandom(chatId int64, maxRate int8) *word.Word
-	GetRandomFive(chatId int64) []*word.Word
+	GetRandomFive(chatId int64, langTo string) []*word.Word
 	GetRandomTranslations(w *word.Word) []*word.Word
 	Update(w *word.Word) (*word.Word, error)
 	GetByChatIdAndValue(chatId int64, value string) *word.Word
@@ -179,13 +179,19 @@ func (r *wordRepository) GetRandom(chatId int64, maxRate int8) *word.Word {
 	return &entity
 }
 
-func (r *wordRepository) GetRandomFive(chatId int64) []*word.Word {
+func (r *wordRepository) GetRandomFive(chatId int64, langTo string) []*word.Word {
 	var entities []*word.Word
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	collection := r.db.Database("words-db").Collection("words")
 	aggregate, err := collection.Aggregate(
 		ctx,
-		[]bson.M{bson.M{"$match": bson.M{"chatId": chatId}}, bson.M{"$sample": bson.M{"size": 5}}},
+		[]bson.M{
+			bson.M{"$match": bson.M{
+				"chatId":    chatId,
+				"valueLang": langTo,
+			}},
+			bson.M{"$sample": bson.M{"size": 5}},
+		},
 	)
 	if err != nil {
 		return nil

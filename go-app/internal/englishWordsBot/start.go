@@ -90,10 +90,15 @@ func (b EnglishWordsBot) askTargetLang(chatID int64) {
 	msg := tgbotapi.NewMessage(chatID, "Choose language you want to study")
 	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("English", "target/en"),
+			tgbotapi.NewInlineKeyboardButtonData("Spanish", "target/es"),
 			tgbotapi.NewInlineKeyboardButtonData("French", "target/fr"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("Germany", "target/de"),
 			tgbotapi.NewInlineKeyboardButtonData("Dutch", "target/nl"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("English", "target/en"),
 		),
 	)
 

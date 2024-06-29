@@ -13,6 +13,7 @@ var Map = map[string]int{
 	"de": 11,
 	"fr": 20,
 	"nl": 45,
+	"es": 58,
 }
 
 func getLanguages() []lingua.Language {
@@ -23,6 +24,7 @@ func getLanguages() []lingua.Language {
 		lingua.Russian,
 		lingua.Ukrainian,
 		lingua.Dutch,
+		lingua.Spanish,
 	}
 }
 

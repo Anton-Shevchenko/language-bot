@@ -30,7 +30,8 @@ func (b EnglishWordsBot) handleCommand(u tgbotapi.Update) {
 
 func (b EnglishWordsBot) commandExam(u tgbotapi.Update) {
 	chatId := u.Message.Chat.ID
-	randomFive := b.wordRepository.GetRandomFive(chatId)
+	chatUser := b.userRepository.GetByChatId(chatId)
+	randomFive := b.wordRepository.GetRandomFive(chatId, chatUser.LangTo)
 
 	for _, w := range randomFive {
 		var calls []*msgBuilder.Callback
