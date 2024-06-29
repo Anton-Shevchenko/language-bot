@@ -146,6 +146,7 @@ func (b EnglishWordsBot) callbackTranslation(u tgbotapi.Update) {
 		b.SendMsg(tgbotapi.NewMessage(u.CallbackQuery.Message.Chat.ID, "Some error. Sorry..."))
 	}
 	text := u.CallbackQuery.Message.Text
+
 	translation, err := b.wordService.GetTranslations(text, chatUser)
 
 	valueLang, err := languageDetector.Detect(u.CallbackQuery.Message.Text, chatUser.GetUserLangs())

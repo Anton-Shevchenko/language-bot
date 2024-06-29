@@ -11,7 +11,7 @@ import (
 )
 
 type jobWordRepository interface {
-	GetRandom(chatId int64) *word.Word
+	GetRandom(chatId int64, maxRate int8) *word.Word
 	GetRandomTranslations(w *word.Word) []*word.Word
 }
 
@@ -47,7 +47,6 @@ func (j *WordJob) WordJob() {
 	us := j.userRepository.GetByIntervals(intervals)
 
 	for _, u := range us {
-		fmt.Println("HERE Word Job")
 		if j.checkIsNotDisturbTime(u) {
 			return
 		}
@@ -56,24 +55,26 @@ func (j *WordJob) WordJob() {
 }
 
 func (j *WordJob) checkIsNotDisturbTime(u *user.User) bool {
+	fmt.Println("START CHECK")
 	if u.NotDisturbFrom == "" {
 		return false
 	}
-	fmt.Println("HERE Checker", u.NotDisturbFrom)
 
-	parse, err := time.Parse("15:04", u.NotDisturbFrom)
+	from, err := time.Parse("15:04", u.NotDisturbFrom)
+
 	if err != nil {
 		return true
 	}
-	fmt.Println("HERE Checker parse", parse)
-	to := parse.Add(time.Duration(u.NotDisturbInterval/60) * time.Minute)
 
-	if to.Sub(parse) >= time.Duration(u.NotDisturbInterval/60)*time.Minute {
+	to := from.Add(time.Duration(u.NotDisturbInterval) * time.Minute)
+	cn := time.Now()
+	nowHour := cn.Hour()
+	nowMinute := cn.Minute()
+
+	if (from.Hour() > nowHour && from.Hour() < to.Hour()) && (from.Minute() > nowMinute && from.Minute() < nowMinute) {
 		fmt.Println("HERE Checker false")
 		return false
 	}
-
-	fmt.Println("HERE Checker parse", parse)
 
 	return true
 }
@@ -92,7 +93,7 @@ func (j *WordJob) getCurrentIntervals() []uint16 {
 }
 
 func (j *WordJob) SendWord(u *user.User) {
-	w := j.wordRepository.GetRandom(u.ChatId)
+	w := j.wordRepository.GetRandom(u.ChatId, u.MaxRate)
 	var calls []*msgBuilder.Callback
 	trans := j.wordRepository.GetRandomTranslations(w)
 	trans = append(trans, w)

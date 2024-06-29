@@ -26,6 +26,7 @@ type wordRepository interface {
 	GetRandomFive(chatId int64) []*word.Word
 	GetRandomTranslations(w *word.Word) []*word.Word
 	GetByChatIdAndValue(chatId int64, value string) *word.Word
+	GetRandom(chatId int64, maxRate int8) *word.Word
 }
 
 type userRepository interface {

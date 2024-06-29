@@ -2,7 +2,6 @@ package wordRepository
 
 import (
 	"context"
-	"fmt"
 	"go-app/internal/domain/word"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,11 +17,12 @@ type WordRepository interface {
 	GetAllByChatId(chatId int64) ([]*word.Word, error)
 	DeleteById(id string) error
 	GetById(id string) *word.Word
-	GetRandom(chatId int64) *word.Word
+	GetRandom(chatId int64, maxRate int8) *word.Word
 	GetRandomFive(chatId int64) []*word.Word
 	GetRandomTranslations(w *word.Word) []*word.Word
 	Update(w *word.Word) (*word.Word, error)
 	GetByChatIdAndValue(chatId int64, value string) *word.Word
+	GetByValue(value string) *word.Word
 }
 
 type wordRepository struct {
@@ -39,10 +39,12 @@ func (r *wordRepository) Update(w *word.Word) (*word.Word, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	// defer cancel() // releases resources if AddWord completes before timeout elapses
 	collection := r.db.Database("words-db").Collection("words")
-	_, err := collection.UpdateOne(ctx, bson.M{"id": w.ID}, bson.M{"$set": bson.M{"rate": w.Rate}})
+	_, err := collection.UpdateOne(
+		ctx,
+		bson.M{"id": w.ID}, bson.M{"$set": bson.M{"rate": w.Rate, "translation": w.Translation}},
+	)
 
 	if err != nil {
-		fmt.Println("ERROR", err.Error())
 		return w, err
 	}
 
@@ -106,6 +108,21 @@ func (r *wordRepository) GetById(id string) *word.Word {
 	return &entity
 }
 
+func (r *wordRepository) GetByValue(value string) *word.Word {
+	var entity word.Word
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	collection := r.db.Database("words-db").Collection("words")
+	res := collection.FindOne(ctx, bson.M{"value": value})
+
+	err := res.Decode(&entity)
+
+	if err != nil {
+		return nil
+	}
+
+	return &entity
+}
+
 func (r *wordRepository) GetByChatIdAndValue(chatId int64, value string) *word.Word {
 	var entity word.Word
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
@@ -134,17 +151,20 @@ func (r *wordRepository) DeleteById(id string) error {
 	return nil
 }
 
-func (r *wordRepository) GetRandom(chatId int64) *word.Word {
+func (r *wordRepository) GetRandom(chatId int64, maxRate int8) *word.Word {
 	var entity word.Word
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	collection := r.db.Database("words-db").Collection("words")
 	aggregate, err := collection.Aggregate(
 		ctx,
-		[]bson.M{bson.M{"$match": bson.M{"chatId": chatId, "rate": bson.M{"$lt": 3}}}, bson.M{"$sample": bson.M{"size": 1}}},
+		[]bson.M{
+			bson.M{
+				"$match": bson.M{"chatId": chatId, "rate": bson.M{"$lt": maxRate}},
+			},
+			bson.M{"$sample": bson.M{"size": 1}},
+		},
 	)
 	if err != nil {
-		fmt.Println("errrrrrr", err.Error())
-
 		return nil
 	}
 

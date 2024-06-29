@@ -42,7 +42,15 @@ func NewWordService(
 }
 
 func (bs *wordService) AddWord(w *word.Word) (*word.Word, error) {
-	return bs.Repository.AddWord(w)
+	oldWord := bs.Repository.GetByValue(w.Value)
+
+	if oldWord == nil {
+		return bs.Repository.AddWord(w)
+	}
+
+	oldWord.Translation = w.Translation
+
+	return bs.Repository.Update(oldWord)
 }
 
 func (bs *wordService) GetTranslations(w string, u *user.User) ([]string, error) {

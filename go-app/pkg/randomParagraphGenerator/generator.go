@@ -1,8 +1,8 @@
 package randomParagraphGenerator
 
 import (
-	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -27,29 +27,21 @@ func NewRandomParagraphGenerator(cf Config) RandomParagraphGenerator {
 }
 
 func (rw *Service) GetRandomParagraph() string {
-	var r []Response
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", rw.url, nil)
+	resp, err := http.Get("http://metaphorpsum.com/paragraphs/2/4")
 
 	if err != nil {
-		fmt.Println("Error create request:", err.Error())
+		fmt.Println(err)
+		return "Paragraph function error."
 	}
 
-	resp, err := client.Do(req)
+	defer resp.Body.Close()
 
+	body, err := io.ReadAll(resp.Body)
+	
 	if err != nil {
-		fmt.Println("Error do request:", err.Error())
+		fmt.Println(err)
+		return "Paragraph function error."
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&r)
-
-	if err != nil {
-		fmt.Println("Error decode:", err.Error())
-	}
-
-	if len(r) > 0 {
-		return r[0].Paragraph
-	}
-
-	return "Paragraph function error."
+	return string(body)
 }
