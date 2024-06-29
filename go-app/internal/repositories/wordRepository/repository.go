@@ -158,13 +158,14 @@ func (r *wordRepository) GetRandom(chatId int64, maxRate int8, langTo string) *w
 	aggregate, err := collection.Aggregate(
 		ctx,
 		[]bson.M{
-			bson.M{
-				"$match": bson.M{
-					"chatId":    chatId,
-					"rate":      bson.M{"$lt": maxRate},
-					"valueLang": langTo,
+			bson.M{"$match": bson.M{
+				"chatId": chatId,
+				"rate":   bson.M{"$lt": maxRate},
+				"$or": []bson.M{
+					bson.M{"valueLang": langTo},
+					bson.M{"translationLang": langTo},
 				},
-			},
+			}},
 			bson.M{"$sample": bson.M{"size": 1}},
 		},
 	)
@@ -191,8 +192,11 @@ func (r *wordRepository) GetRandomFive(chatId int64, langTo string) []*word.Word
 		ctx,
 		[]bson.M{
 			bson.M{"$match": bson.M{
-				"chatId":          chatId,
-				"translationLang": langTo,
+				"$or": []bson.M{
+					bson.M{"translationLang": langTo},
+					bson.M{"valueLang": langTo},
+				},
+				"chatId": chatId,
 			}},
 			bson.M{"$sample": bson.M{"size": 5}},
 		},
