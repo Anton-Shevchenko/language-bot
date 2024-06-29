@@ -11,12 +11,13 @@ import (
 )
 
 type jobWordRepository interface {
-	GetRandom(chatId int64, maxRate int8) *word.Word
+	GetRandom(chatId int64, maxRate int8, langTo string) *word.Word
 	GetRandomTranslations(w *word.Word) []*word.Word
 }
 
 type jobUserRepository interface {
 	GetByIntervals(intervals []uint16) []*user.User
+	GetByChatId(chatId int64) *user.User
 }
 
 type WordJob struct {
@@ -93,7 +94,8 @@ func (j *WordJob) getCurrentIntervals() []uint16 {
 }
 
 func (j *WordJob) SendWord(u *user.User) {
-	w := j.wordRepository.GetRandom(u.ChatId, u.MaxRate)
+	chatUser := j.userRepository.GetByChatId(u.ChatId)
+	w := j.wordRepository.GetRandom(u.ChatId, u.MaxRate, chatUser.LangTo)
 	var calls []*msgBuilder.Callback
 	trans := j.wordRepository.GetRandomTranslations(w)
 	trans = append(trans, w)
