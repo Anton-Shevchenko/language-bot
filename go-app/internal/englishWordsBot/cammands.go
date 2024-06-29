@@ -1,7 +1,6 @@
 package englishWordsBot
 
 import (
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go-app/internal/domain/user"
 	"go-app/internal/domain/word"
@@ -132,6 +131,7 @@ func (b EnglishWordsBot) commandUpdateInterval(u tgbotapi.Update, param string) 
 func (b EnglishWordsBot) commandAskInterval(chatId int64) {
 	msg := tgbotapi.NewMessage(chatId, "Choose an interval to send words")
 	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("2 minutes", "interval/2")),
 		tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("30 minutes", "interval/30")),
 		tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("1 hour", "interval/60")),
 		tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("2 hours", "interval/120")),

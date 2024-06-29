@@ -37,6 +37,7 @@ func Translate(source, sourceLang, targetLang string) ([]string, error) {
 	var result []interface{}
 
 	encodedSource, err := encodeURI(source)
+	fmt.Println("JJJJJJ", source, encodedSource)
 	if err != nil {
 		return []string{"err"}, err
 	}
