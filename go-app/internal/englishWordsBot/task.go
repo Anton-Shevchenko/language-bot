@@ -94,9 +94,11 @@ func (j *WordJob) getCurrentIntervals() []uint16 {
 }
 
 func (j *WordJob) SendWord(u *user.User) {
-	chatUser := j.userRepository.GetByChatId(u.ChatId)
-	w := j.wordRepository.GetRandom(u.ChatId, u.MaxRate, chatUser.LangTo)
 	var calls []*msgBuilder.Callback
+
+	chatUser := j.userRepository.GetByChatId(u.ChatId)
+
+	w := j.wordRepository.GetRandom(u.ChatId, u.MaxRate, chatUser.LangTo)
 	trans := j.wordRepository.GetRandomTranslations(w)
 	trans = append(trans, w)
 

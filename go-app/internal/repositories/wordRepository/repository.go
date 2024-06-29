@@ -191,8 +191,8 @@ func (r *wordRepository) GetRandomFive(chatId int64, langTo string) []*word.Word
 		ctx,
 		[]bson.M{
 			bson.M{"$match": bson.M{
-				"chatId":    chatId,
-				"valueLang": langTo,
+				"chatId":          chatId,
+				"translationLang": langTo,
 			}},
 			bson.M{"$sample": bson.M{"size": 5}},
 		},
