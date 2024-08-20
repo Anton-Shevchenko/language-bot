@@ -1,7 +1,6 @@
 package englishWordsBot
 
 import (
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go-app/internal/domain/user"
 	"go-app/internal/domain/word"
@@ -56,28 +55,19 @@ func (j *WordJob) WordJob() {
 }
 
 func (j *WordJob) checkIsNotDisturbTime(u *user.User) bool {
-	fmt.Println("START CHECK")
 	if u.NotDisturbFrom == "" {
 		return false
 	}
 
 	from, err := time.Parse("15:04", u.NotDisturbFrom)
-
 	if err != nil {
 		return true
 	}
 
 	to := from.Add(time.Duration(u.NotDisturbInterval) * time.Minute)
 	cn := time.Now()
-	nowHour := cn.Hour()
-	nowMinute := cn.Minute()
 
-	if (from.Hour() > nowHour && from.Hour() < to.Hour()) && (from.Minute() > nowMinute && from.Minute() < nowMinute) {
-		fmt.Println("HERE Checker false")
-		return false
-	}
-
-	return true
+	return !(cn.After(from) && cn.Before(to))
 }
 
 func (j *WordJob) getCurrentIntervals() []uint16 {
