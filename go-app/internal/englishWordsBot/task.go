@@ -70,7 +70,7 @@ func (j *WordJob) checkIsNotDisturbTime(u *user.User) bool {
 	to := from.Add(time.Duration(u.NotDisturbInterval) * time.Minute)
 	cn := time.Now()
 
-	fmt.Println("time error", cn.After(from), cn.Before(to))
+	fmt.Println("time diff", from, to, u.NotDisturbFrom)
 
 	return !(cn.After(from) && cn.Before(to))
 }
